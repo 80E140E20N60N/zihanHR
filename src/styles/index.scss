@@ -1,4 +1,5 @@
 @import './variables.scss';
+@import './common.scss';   //在variable.scss后面引入,否则会报变量未定义错误
 @import './mixin.scss';
 @import './transition.scss';
 @import './element-ui.scss';
