@@ -56,7 +56,7 @@
 
 <script>
 import { validMobile } from '@/utils/validate'
-
+import { mapActions } from 'vuex' // 引入vuex的辅助函数
 export default {
   name: 'Login',
   data() {
@@ -95,6 +95,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['user/login']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -106,18 +107,34 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+      // this.$refs.loginForm.validate(valid => {
+      //   if (valid) {
+      //     this.loading = true
+      //     this.$store.dispatch('user/login', this.loginForm).then(() => {
+      //       this.$router.push({ path: this.redirect || '/' })
+      //       this.loading = false
+      //     }).catch(() => {
+      //       this.loading = false
+      //     })
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
+      // 登录按钮
+      // 先完成手动的校验
+      this.$refs.loginForm.validate(async isOK => {
+        if (isOK) {
+          try {
+          // 表示校验通过
+            this.loading = true // 先让按钮转圈
+            await this['user/login'](this.loginForm) // 调用action
             this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
+            // 跳转到主页
+            this.$router.push('/') // 跳到主页
+          } catch (error) {
+            this.loading = false // 失败之后关闭转圈
+          }
         }
       })
     }
